@@ -3,6 +3,7 @@ package pers.twins.rpc.common.serialization;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.util.Pool;
 import lombok.extern.slf4j.Slf4j;
 import pers.twins.rpc.common.exception.SerializationException;
 import pers.twins.rpc.common.remoting.RpcRequest;
@@ -10,6 +11,7 @@ import pers.twins.rpc.common.remoting.RpcResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 
 /**
  * @author twins
@@ -19,37 +21,49 @@ import java.io.ByteArrayOutputStream;
 public class KryoSerializer implements Serializer {
 
     /**
-     * Because Kryo is not thread safe. So, use ThreadLocal to store Kryo objects
+     * Because Kryo is not thread safe and constructing and configuring a Kryo instance is relatively expensive,
+     * in a multithreaded environment ThreadLocal or pooling might be considered.
      */
-    private final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
-        Kryo kryo = new Kryo();
-        kryo.register(RpcResponse.class);
-        kryo.register(RpcRequest.class);
-        return kryo;
-    });
+    private static final Pool<Kryo> KRYO_POOL = new Pool<>(true, false, 8) {
+        @Override
+        protected Kryo create() {
+            Kryo kryo = new Kryo();
+            kryo.register(RpcRequest.class);
+            kryo.register(RpcResponse.class);
+            return kryo;
+        }
+    };
 
     @Override
     public byte[] serialize(Object obj) {
+        Kryo kryo = null;
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              Output output = new Output(byteArrayOutputStream)) {
-            Kryo kryo = kryoThreadLocal.get();
+            kryo = KRYO_POOL.obtain();
             kryo.writeObject(output, obj);
-            kryoThreadLocal.remove();
+            KRYO_POOL.free(kryo);
             return output.toBytes();
         } catch (Exception e) {
+            if (Objects.nonNull(kryo)) {
+                KRYO_POOL.free(kryo);
+            }
             throw new SerializationException("Serialization failed");
         }
     }
 
     @Override
     public <T> T deserialize(byte[] bytes, Class<T> clazz) {
+        Kryo kryo = null;
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
              Input input = new Input(byteArrayInputStream)) {
-            Kryo kryo = kryoThreadLocal.get();
+            kryo = KRYO_POOL.obtain();
             Object object = kryo.readObject(input, clazz);
-            kryoThreadLocal.remove();
+            KRYO_POOL.free(kryo);
             return clazz.cast(object);
         } catch (Exception e) {
+            if (Objects.nonNull(kryo)) {
+                KRYO_POOL.free(kryo);
+            }
             throw new SerializationException("Deserialization failed");
         }
     }
