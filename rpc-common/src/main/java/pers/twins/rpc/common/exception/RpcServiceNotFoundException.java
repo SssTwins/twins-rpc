@@ -6,7 +6,7 @@ import java.io.Serial;
  * @author twins
  * @date 2023-07-16 22:48:58
  */
-public class RpcServiceNotFoundException extends RuntimeException {
+public class RpcServiceNotFoundException extends RpcException {
 
     @Serial
     private static final long serialVersionUID = 8139096230374891645L;
