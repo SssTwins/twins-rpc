@@ -1,4 +1,4 @@
-package pers.twins.rpc.common.remoting.service.discovery;
+package pers.twins.rpc.common.remoting.service;
 
 import pers.twins.rpc.common.remoting.RpcRequest;
 

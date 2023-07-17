@@ -1,6 +1,4 @@
-package pers.twins.rpc.common.remoting.service.provider;
-
-import pers.twins.rpc.common.remoting.service.RpcService;
+package pers.twins.rpc.common.remoting.service;
 
 /**
  * rpc服务提供类
@@ -22,6 +20,7 @@ public interface ServiceProvider {
      * publish service
      *
      * @param rpcService the service wrapper class used by rpc
+     * @param serverPort server port
      */
-    void publishService(RpcService rpcService);
+    void publishService(RpcService rpcService, int serverPort);
 }
