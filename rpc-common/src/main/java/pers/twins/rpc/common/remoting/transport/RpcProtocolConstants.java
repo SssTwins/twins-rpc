@@ -8,28 +8,26 @@ import lombok.NoArgsConstructor;
  * @date 2023-07-17 20:34:18
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RpcCodecConstants {
+public class RpcProtocolConstants {
 
 
     public static final byte[] MAGIC_NUMBER = {(byte) 't', (byte) 'w', (byte) 'i', (byte) 'n'};
 
     public static final byte VERSION = 1;
 
-    public static final byte TOTAL_LENGTH = 16;
+    public static final byte TYPE_REQUEST = 1;
 
-    public static final byte REQUEST_TYPE = 1;
-
-    public static final byte RESPONSE_TYPE = 2;
+    public static final byte TYPE_RESPONSE = 2;
 
     /**
      * ping type
      */
-    public static final byte HEARTBEAT_REQUEST_TYPE = 3;
+    public static final byte TYPE_HEARTBEAT_REQUEST = 3;
 
     /**
      * pong type
      */
-    public static final byte HEARTBEAT_RESPONSE_TYPE = 4;
+    public static final byte TYPE_HEARTBEAT_RESPONSE = 4;
 
     public static final int HEAD_LENGTH = 16;
 

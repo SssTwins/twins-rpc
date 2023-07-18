@@ -15,18 +15,18 @@ import java.lang.reflect.Method;
 public class RpcRequestHandler {
 
     /**
-     * Processing rpcRequest: call the corresponding method, and then return the method
+     * 处理rpcRequest，调用相应的方法并返回
      */
     public Object handle(RpcRequest rpcRequest, Object service) {
         return invokeTargetMethod(rpcRequest, service);
     }
 
     /**
-     * get method execution results
+     * 获取方法执行结果
      *
-     * @param rpcRequest client request
-     * @param service    service object
-     * @return the result of the target method execution
+     * @param rpcRequest 客户端 request
+     * @param service    需要调用的service
+     * @return 目标方法的执行结果
      */
     private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) {
         Object result;

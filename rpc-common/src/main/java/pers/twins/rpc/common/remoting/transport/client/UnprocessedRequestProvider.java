@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 存放CompletableFuture对象，作为netty异步处理的中转容器
+ *
  * @author twins
  * @date 2023-07-17 22:33:42
  */

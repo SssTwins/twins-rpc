@@ -8,12 +8,11 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
-import pers.twins.rpc.common.factory.SingletonFactory;
+import pers.twins.rpc.common.enmus.CompressorType;
+import pers.twins.rpc.common.enmus.SerializationType;
 import pers.twins.rpc.common.remoting.RpcMessage;
 import pers.twins.rpc.common.remoting.RpcResponse;
-import pers.twins.rpc.common.remoting.transport.RpcCodecConstants;
-
-import java.net.InetSocketAddress;
+import pers.twins.rpc.common.remoting.transport.RpcProtocolConstants;
 
 /**
  * @author twins
@@ -24,11 +23,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private final UnprocessedRequestProvider unprocessedRequestProvider;
 
-    private final ChannelProvider channelProvider;
-
-    public NettyClientHandler(ChannelProvider channelProvider) {
-        this.unprocessedRequestProvider = SingletonFactory.getInstance(UnprocessedRequestProvider.class);
-        this.channelProvider = channelProvider;
+    public NettyClientHandler(UnprocessedRequestProvider unprocessedRequestProvider) {
+        this.unprocessedRequestProvider = unprocessedRequestProvider;
     }
 
     /**
@@ -40,9 +36,9 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             log.info("client receive msg: [{}]", msg);
             if (msg instanceof RpcMessage tmp) {
                 byte messageType = tmp.getMessageType();
-                if (messageType == RpcCodecConstants.HEARTBEAT_RESPONSE_TYPE) {
-                    log.info("heart [{}]", tmp.getData());
-                } else if (messageType == RpcCodecConstants.RESPONSE_TYPE) {
+                if (messageType == RpcProtocolConstants.TYPE_HEARTBEAT_RESPONSE) {
+                    log.info("service heart [{}]", tmp.getData());
+                } else if (messageType == RpcProtocolConstants.TYPE_RESPONSE) {
                     RpcResponse<Object> rpcResponse = (RpcResponse<Object>) tmp.getData();
                     unprocessedRequestProvider.complete(rpcResponse);
                 }
@@ -57,15 +53,25 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent idleStateEvent) {
             IdleState state = idleStateEvent.state();
             if (state == IdleState.WRITER_IDLE) {
-                log.info("write idle happen [{}]", ctx.channel().remoteAddress());
-                Channel channel = channelProvider.get((InetSocketAddress) ctx.channel().remoteAddress());
+                Channel channel = ctx.channel();
+                log.info("write idle happen [{}]", channel.remoteAddress());
                 RpcMessage rpcMessage = new RpcMessage();
-                // todo rpcMsg fill
-                channel.writeAndFlush(rpcMessage).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+                rpcMessage.setCodec(SerializationType.KRYO.getCode());
+                rpcMessage.setCompress(CompressorType.GZIP.getCode());
+                rpcMessage.setMessageType(RpcProtocolConstants.TYPE_HEARTBEAT_REQUEST);
+                rpcMessage.setData(RpcProtocolConstants.PING);
+                channel.writeAndFlush(rpcMessage)
+                        .addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
             }
         } else {
             super.userEventTriggered(ctx, evt);
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.error("client catch exception", cause);
+        ctx.close();
     }
 
 }
