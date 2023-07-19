@@ -67,6 +67,8 @@ public class NettyDecoder extends LengthFieldBasedFrameDecoder {
         int fullLength = in.readInt();
         byte messageType = in.readByte();
         byte codecType = in.readByte();
+        //byte compressType =
+        in.readByte();
         int requestId = in.readInt();
         RpcMessage rpcMessage = RpcMessage.builder()
                 .codec(codecType)

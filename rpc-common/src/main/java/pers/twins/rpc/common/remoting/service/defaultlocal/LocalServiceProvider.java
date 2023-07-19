@@ -74,7 +74,7 @@ public class LocalServiceProvider implements ServiceProvider, ServiceDiscovery {
             return;
         }
         final List<String> remoteServiceUrlList = remoteServiceMap.getOrDefault(rpcServiceName, new ArrayList<>());
-        remoteServiceUrlList.add(new InetSocketAddress(host, serverPort).toString());
+        remoteServiceUrlList.add(host + ":" + serverPort);
         remoteServiceMap.put(rpcServiceName, remoteServiceUrlList);
         serviceMap.put(rpcServiceName, rpcService.getService());
         log.info("Add service: {} and interfaces:{}", rpcServiceName, rpcService.getService().getClass().getInterfaces());

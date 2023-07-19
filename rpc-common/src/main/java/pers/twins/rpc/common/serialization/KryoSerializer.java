@@ -30,6 +30,9 @@ public class KryoSerializer implements Serializer {
             Kryo kryo = new Kryo();
             kryo.register(RpcRequest.class);
             kryo.register(RpcResponse.class);
+            kryo.register(java.lang.Class[].class);
+            kryo.register(Class.class);
+            kryo.register(java.lang.Object[].class);
             return kryo;
         }
     };
