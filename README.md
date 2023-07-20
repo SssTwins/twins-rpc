@@ -4,7 +4,7 @@
 ### 介绍
 
 ---
-基于Netty + Kryo实现的一个简易rpc框架
+基于Netty + Kryo + Zookeeper 实现的一个简易rpc框架
 
 
 ### 基本的框架设计思路
