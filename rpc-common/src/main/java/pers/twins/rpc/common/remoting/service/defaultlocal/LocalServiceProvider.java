@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author twins
- * @date 2023-7-17 14:23:56
+ * @date 2023-7-17 19:23:56
  */
 @Slf4j
 public class LocalServiceProvider implements ServiceProvider, ServiceDiscovery {
@@ -89,10 +89,7 @@ public class LocalServiceProvider implements ServiceProvider, ServiceDiscovery {
         }
         String targetServiceUrl = loadBalancer.select(serviceUrlList, rpcRequest);
         log.info("Successfully found the service address:[{}]", targetServiceUrl);
-        String[] socketAddressArray = targetServiceUrl.split(":");
-        String host = socketAddressArray[0];
-        int port = Integer.parseInt(socketAddressArray[1]);
-        return new InetSocketAddress(host, port);
+        return serviceUrlParseToAddr(targetServiceUrl);
     }
 
 }

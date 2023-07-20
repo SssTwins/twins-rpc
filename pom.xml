@@ -27,6 +27,7 @@
         <logback.version>1.4.8</logback.version>
         <junit.version>5.9.3</junit.version>
         <google.guava>32.1.1-jre</google.guava>
+        <curator.framework.version>5.5.0</curator.framework.version>
     </properties>
 
     <dependencyManagement>
@@ -71,6 +72,11 @@
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.framework.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

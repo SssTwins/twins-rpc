@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author twins
- * @date 2023-07-16 11:12:46
+ * @date 2023-07-16 19:12:46
  */
 @Slf4j
 public class NettyServer {
@@ -36,6 +36,10 @@ public class NettyServer {
 
     public NettyServer() {
         serviceProvider = SingletonFactory.getInstance(LocalServiceProvider.class);
+    }
+
+    public NettyServer(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
     }
 
     @SneakyThrows(UnknownHostException.class)

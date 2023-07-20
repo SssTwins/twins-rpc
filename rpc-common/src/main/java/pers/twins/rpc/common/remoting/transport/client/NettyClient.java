@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author twins
- * @date 2023-07-17 16:42:18
+ * @date 2023-07-17 19:42:18
  */
 @Slf4j
 public class NettyClient implements RpcRequestTransport {
@@ -45,8 +45,12 @@ public class NettyClient implements RpcRequestTransport {
     private final UnprocessedRequestProvider unprocessedRequestProvider;
 
     public NettyClient() {
+        this(SingletonFactory.getInstance(LocalServiceProvider.class));
+    }
+
+    public NettyClient(ServiceDiscovery serviceDiscovery) {
         channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
-        serviceDiscovery = SingletonFactory.getInstance(LocalServiceProvider.class);
+        this.serviceDiscovery = serviceDiscovery;
         unprocessedRequestProvider = SingletonFactory.getInstance(UnprocessedRequestProvider.class);
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();

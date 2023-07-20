@@ -13,6 +13,19 @@ import java.net.InetSocketAddress;
 public interface ServiceDiscovery {
 
     /**
+     * 解析服务地址生成InetSocketAddress对象
+     *
+     * @param targetServiceUrl 目标服务地址
+     * @return InetSocketAddress
+     */
+    default InetSocketAddress serviceUrlParseToAddr(String targetServiceUrl) {
+        String[] socketAddressArray = targetServiceUrl.split(":");
+        String host = socketAddressArray[0];
+        int port = Integer.parseInt(socketAddressArray[1]);
+        return new InetSocketAddress(host, port);
+    }
+
+    /**
      * gets a service by rpcRequest properties address to invoke
      *
      * @param rpcRequest rpcRequest

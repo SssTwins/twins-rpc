@@ -18,11 +18,4 @@ public interface ServiceRegistry {
      */
     void registerService(String rpcServiceName, InetSocketAddress inetSocketAddress);
 
-    /**
-     * unregister service
-     *
-     * @param rpcServiceName    rpc service name
-     * @param inetSocketAddress service address
-     */
-    void unregisterService(String rpcServiceName, InetSocketAddress inetSocketAddress);
 }
