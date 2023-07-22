@@ -23,4 +23,11 @@ public class ZkServiceRegistry implements ServiceRegistry {
         CuratorUtil.createEphemeralNode(zkClient, serviceAddrPath);
     }
 
+    @Override
+    public void unregisterService(String rpcServiceName, InetSocketAddress inetSocketAddress) {
+        String serviceParentPath = CuratorUtil.ZK_REGISTER_ROOT_PATH + "/" + rpcServiceName;
+        String serviceAddrPath = serviceParentPath + inetSocketAddress.toString();
+        CuratorUtil.removeNode(CuratorUtil.getZkClient(), serviceAddrPath);
+    }
+
 }

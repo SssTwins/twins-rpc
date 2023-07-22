@@ -81,6 +81,12 @@ public class LocalServiceProvider implements ServiceProvider, ServiceDiscovery {
     }
 
     @Override
+    public void unregisterAllService(InetSocketAddress inetSocketAddress) {
+        serviceMap.clear();
+        remoteServiceMap.clear();
+    }
+
+    @Override
     public InetSocketAddress lookupToInvoke(RpcRequest rpcRequest) {
         String rpcServiceName = rpcRequest.getRpcServiceName();
         final List<String> serviceUrlList = remoteServiceMap.get(rpcServiceName);

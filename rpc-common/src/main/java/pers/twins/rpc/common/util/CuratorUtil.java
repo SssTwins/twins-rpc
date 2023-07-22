@@ -126,4 +126,19 @@ public class CuratorUtil {
         }
         return result;
     }
+
+    /**
+     * 移除已注册的节点
+     *
+     * @param zkClient zkClient
+     * @param path     节点路径
+     */
+    public static void removeNode(CuratorFramework zkClient, String path) {
+        try {
+            zkClient.delete().forPath(path);
+            log.info("remove registry for path [{}] successfully", path);
+        } catch (Exception e) {
+            log.error("remove registry for path [{}] fail", path);
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package pers.twins.rpc.common.remoting.service;
 
+import java.net.InetSocketAddress;
+
 /**
  * rpc服务提供类
  *
@@ -23,4 +25,11 @@ public interface ServiceProvider {
      * @param serverPort server port
      */
     void publishService(RpcService rpcService, int serverPort);
+
+    /**
+     * 移除当前应用所有已注册的服务
+     *
+     * @param inetSocketAddress inetSocketAddress
+     */
+    void unregisterAllService(InetSocketAddress inetSocketAddress);
 }

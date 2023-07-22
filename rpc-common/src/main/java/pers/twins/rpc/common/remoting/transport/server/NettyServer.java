@@ -20,6 +20,7 @@ import pers.twins.rpc.common.remoting.transport.codec.NettyDecoder;
 import pers.twins.rpc.common.remoting.transport.codec.NettyRpcMsgEncoder;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
@@ -35,11 +36,19 @@ public class NettyServer {
     private final ServiceProvider serviceProvider;
 
     public NettyServer() {
-        serviceProvider = SingletonFactory.getInstance(LocalServiceProvider.class);
+        this(SingletonFactory.getInstance(LocalServiceProvider.class));
     }
 
     public NettyServer(ServiceProvider serviceProvider) {
         this.serviceProvider = serviceProvider;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), DEFAULT_PORT);
+                serviceProvider.unregisterAllService(inetSocketAddress);
+            } catch (UnknownHostException e) {
+                log.warn("occur exception when getHostAddress", e);
+            }
+        }));
     }
 
     @SneakyThrows(UnknownHostException.class)

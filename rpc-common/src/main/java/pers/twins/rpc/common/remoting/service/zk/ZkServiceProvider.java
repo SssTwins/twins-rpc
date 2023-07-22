@@ -48,4 +48,12 @@ public class ZkServiceProvider implements ServiceProvider {
             log.error("occur exception when getHostAddress", e);
         }
     }
+
+    @Override
+    public void unregisterAllService(InetSocketAddress inetSocketAddress) {
+        serviceMap.keySet().forEach((k -> {
+            serviceRegistry.unregisterService(k, inetSocketAddress);
+            serviceMap.remove(k);
+        }));
+    }
 }
